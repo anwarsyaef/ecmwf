@@ -1,7 +1,8 @@
-import numpy as np
+#!/usr/bin/env python
 import pandas as pd
 import pygrib
 from collections import namedtuple
+from datetime import datetime, timedelta
 
 def closest_grid_point(in_lat, in_lon, grid=0.75):
     """Returns index of point closest to input"""
@@ -12,9 +13,10 @@ def closest_grid_point(in_lat, in_lon, grid=0.75):
     return (lat_idx, lon_idx)
 
 
-grbs = pygrib.open('/home/tpk/testTemp.grib')
-txt_stations = pd.read_csv('/home/tpk/hydro/stations.txt', header=None, 
-                               delimiter=';')
+grib_path = "/home/tpk/hydro/ecmwf/precipitation.grib"
+stations_path = "/home/tpk/hydro/ecmwf/stations.txt"
+grbs = pygrib.open(grib_path)
+txt_stations = pd.read_csv(stations_path, header=None, delimiter=';')
 
 Station = namedtuple('station', ['lat', 'lon', 'lat_idx', 'lon_idx'])
 
@@ -29,21 +31,28 @@ for index, row in txt_stations.iterrows():
     lat_idx, lon_idx = closest_grid_point(lat, lon)
     dct_station_info[row[0]] = Station(lat, lon, lat_idx, lon_idx)
     dct_station_data[row[0]+'_T'] = pd.DataFrame(columns=tcols)
-    #dct_station_data[row[0]+'_P'] = pd.DataFrame(columns=pcols)
+    dct_station_data[row[0]+'_P'] = pd.DataFrame(columns=pcols)
 
 
-for grb in grbs[:2]:
-    #print(grb.analDate)
-    #print(grb.validDate)
-    if grb['name'] == "2 metre temperature":
-        for station in dct_station_info.keys():
-            date_time = grb.analDate
-            temperature = grb.values[dct_station_info[station].lat_idx, 
-                                     dct_station_info[station].lon_idx]
-            tmp_df = pd.DataFrame([[date_time, temperature]], columns=tcols)
-            print(tmp_df)            
+for grb in grbs[:10]:
+    date_time = grb.analDate + timedelta(hours=grb.endStep)
+    for station in dct_station_info.keys():
+        value = grb.values[dct_station_info[station].lat_idx, 
+                           dct_station_info[station].lon_idx]
+        if grb.name == "2 metre temperature":
+            tmp_df = pd.DataFrame([[date_time, value]], columns=tcols)        
             dct_station_data[station+'_T'] = \
-                            dct_station_data[station+'_T'].append(tmp_df)
+                                dct_station_data[station+'_T'].append(tmp_df)
+        elif grb.name == "Total precipitation":
+            tmp_df = pd.DataFrame([[date_time, value]], columns=pcols)        
+            dct_station_data[station+'_P'] = \
+                                dct_station_data[station+'_P'].append(tmp_df)
+    #print(grb['name'])
+    #print(grb.analDate)
+    #print(grb.endStep)
+
+
+
 
 #grb = grbs[1]
 #print(grb.keys())

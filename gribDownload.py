@@ -15,5 +15,20 @@ server.retrieve({
     "stream": "oper",
     "time": "00:00:00/06:00:00/12:00:00/18:00:00",
     "type": "an",
-    "target": "/home/tpk/testTemp.grib",
+    "target": "/home/tpk/hydro/ecmwf/temperature.grib",
+})
+
+server.retrieve({
+    "class": "ei",
+    "dataset": "interim",
+    "date": "2015-07-01/to/2015-07-31",
+    "expver": "1",
+    "grid": "0.75/0.75",
+    "levtype": "sfc",
+    "param": "228.128",
+    "step": "3/6/9/12",
+    "stream": "oper",
+    "time": "00:00:00/12:00:00",
+    "type": "fc",
+    "target": "/home/tpk/hydro/ecmwf/precipitation.grib",
 })
