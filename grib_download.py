@@ -22,7 +22,7 @@ def download_grib(weather_var, start_date, end_date):
             "stream": "oper",
             "time": "00:00:00/06:00:00/12:00:00/18:00:00",
             "type": "an",
-            "target": "/home/tpk/hydro/ecmwf/temperature" + save_str + ".grib",
+            "target": "/home/tpk/projects/ecmwf/temperature" + save_str + ".grib",
         })
     elif weather_var == "precipitation":
         server.retrieve({
@@ -37,12 +37,12 @@ def download_grib(weather_var, start_date, end_date):
             "stream": "oper",
             "time": "00:00:00/12:00:00",
             "type": "fc",
-            "target": "/home/tpk/hydro/ecmwf/precipitation" + save_str + ".grib",
+            "target": "/home/tpk/projects/ecmwf/precipitation" + save_str + ".grib",
         })
 
 
 if __name__ == "__main__":
-    for year in range(1992, 2017):
+    for year in range(2016, 2017):
         start = str(year) + "-01-01"
         end = str(year) + "-12-31"
-        download_grib("precipitation", start, end)
+        download_grib("temperature", start, end)
