@@ -1,8 +1,6 @@
 import pandas as pd
 from datetime import datetime, timedelta
 
-
-
 save_path = "/home/tpk/projects/ecmwf/csv/"
 temp_path = "/home/tpk/projects/ecmwf/csv/ARAD_T.csv"
 

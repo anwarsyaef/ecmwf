@@ -31,17 +31,18 @@ for index, row in txt_stations.iterrows():
     dct_station_data[row[0]+'_P'] = pd.DataFrame(columns=pcols)
 
 
-path_root = "/home/tpk/projects/ecmwf/"
+path_root = "/home/tpk/projects/ecmwf/data/"
 for wvar in ['temperature', 'precipitation']:
     for year in range(1991, 2017):
         start = str(year) + "-01-01"
         end = str(year) + "-12-31"
         grib_path = path_root + wvar + "_" + start + "_" + end + ".grib"
         grbs = pygrib.open(grib_path)
-        print('Processing: ' + grib_path)
         for grb in grbs:
+            print(grb)
             date_time = grb.analDate + timedelta(hours=grb.endStep)
             for station in dct_station_info.keys():
+                
                 value = grb.values[dct_station_info[station].lat_idx, 
                                    dct_station_info[station].lon_idx]
                 if grb.name == "2 metre temperature":
